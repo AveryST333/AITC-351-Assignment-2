@@ -4,11 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.Duration;
 
 /*To Do List:
 - FINISH DATE AND TIME
-- FINISH DURATION
 - FINISH END DATE
 - NOTE: ALL SHOULD BE DONE USING THE JAVA.TIME COMMANDS
 */
@@ -24,11 +22,11 @@ public class CalenderEvent {
     public CalenderEvent(){
         currentDate = LocalDateTime.now();
         creator = "Not available";
-        date = LocalDateTime.now();
+        date = null;
         desc = "Not available";
         duration = -1;
         valid = false;
-        end = "";
+        end = null;
     }
     //name and date are variables that are being passed down to child classes
     /**
@@ -41,7 +39,7 @@ public class CalenderEvent {
      * @param valid
      * @param end
      */
-    public CalenderEvent(LocalDateTime currentDate, String creator, LocalDateTime date, String desc, int duration, boolean valid, String end){
+    public CalenderEvent(LocalDateTime currentDate, String creator, LocalDateTime date, String desc, int duration, boolean valid, LocalDateTime end){
         this.currentDate = currentDate;
         this.creator = creator;
         this.date = date;
@@ -51,13 +49,13 @@ public class CalenderEvent {
         this.end = end;
     }
 
-    public LocalDateTime currentDate = LocalDateTime.now();
+    public LocalDateTime currentDate;
     protected String creator;
     protected LocalDateTime date;
     private String desc;
     protected int duration; 
     private boolean valid; //used to validate whether recurring has the correct input
-    protected String end;
+    protected LocalDateTime end;
 
     //setters
     /**
@@ -102,10 +100,13 @@ public class CalenderEvent {
      * @param userDate
      */
     public void setDate(String userDate, DateTimeFormatter format){
-        //References used for code below and code in setEnd
-            //Source: https://stackoverflow.com/questions/20231539/java-check-the-date-format-of-current-string-is-according-to-required-format-or
-        if (userDate.equals("yyyy-MM-dd HH:mm:ss a")){
-            LocalDateTime date = LocalDateTime.parse(userDate, format);
+        //References used for code below
+            //Source: https://howtodoinjava.com/java/date-time/java-localdatetime-class/
+        //ISSUE WITH PARSE, USER INPUT WON'T GET PARSED AND BECOME A LOCALDATETIME OBJECT
+            //possibly an issue with format, go to Assignment2.java line 26 for format and its declaration
+        LocalDateTime date = LocalDateTime.parse(userDate, format);
+        boolean beforeCurr = date.isBefore(currentDate);
+        if (!beforeCurr){
             this.date = date;
         }
         else{
@@ -114,9 +115,11 @@ public class CalenderEvent {
     }
     /**
      * Setter for the end date
-     * @param end
+     * @param date of the event 
+     * @param duration of the event
      */
-    public void setEnd(String end){
+    public void setEnd(LocalDateTime date, int duration){
+        LocalDateTime end = date.plusMinutes(duration);
         this.end = end;
     }
 
@@ -132,7 +135,7 @@ public class CalenderEvent {
             return;
         }
         else{
-           this.duration = duration;
+            this.duration = duration;
         }
     }
     /**
@@ -182,7 +185,7 @@ public class CalenderEvent {
      * Method that returns the end date event 
      * @return end date of the event
      */
-    public String getEnd(){
+    public LocalDateTime getEnd(){
         return end;
     }
     /**
