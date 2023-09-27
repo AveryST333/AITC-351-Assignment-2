@@ -22,17 +22,26 @@ public class Meeting extends CalenderEvent{
         this.participants = participants;
     }
 
-    public void setRoom(){
-        //set a random room id in AB001 format
-        //first 2 digits should be a capitalized letter, last 3 should be ints
+    /**
+     * Setter for room ID
+     * @param room
+     */
+    public void setRoom(String room){
+        String patternRoomNumber = "^[A-Z]{2}?[0-9]{3}?$";
+        if (!room.matches(patternRoomNumber)){
+            return;
+        }
+        else{
+            this.room = room;
+        }
     }
-
     /**
      * Getter for the participates
      * @return an array listing the participants
      */
     public String[] getParticipants(){
         return participants;
+
     }
     /**
      * Getter for the room where the meeting will be held

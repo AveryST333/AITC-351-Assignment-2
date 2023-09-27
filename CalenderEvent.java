@@ -26,7 +26,6 @@ public class CalenderEvent {
         desc = "Not available";
         duration = -1;
         valid = false;
-        end = null;
     }
     //name and date are variables that are being passed down to child classes
     /**
@@ -37,16 +36,14 @@ public class CalenderEvent {
      * @param desc
      * @param duration
      * @param valid
-     * @param end
      */
-    public CalenderEvent(LocalDateTime currentDate, String creator, LocalDateTime date, String desc, int duration, boolean valid, LocalDateTime end){
+    public CalenderEvent(LocalDateTime currentDate, String creator, LocalDateTime date, String desc, int duration, boolean valid){
         this.currentDate = currentDate;
         this.creator = creator;
         this.date = date;
         this.desc = desc;
         this.duration = duration;
         this.valid = valid;
-        this.end = end;
     }
 
     public LocalDateTime currentDate;
@@ -55,7 +52,6 @@ public class CalenderEvent {
     private String desc;
     protected int duration; 
     private boolean valid; //used to validate whether recurring has the correct input
-    protected LocalDateTime end;
 
     //setters
     /**
@@ -102,8 +98,6 @@ public class CalenderEvent {
     public void setDate(String userDate, DateTimeFormatter format){
         //References used for code below
             //Source: https://howtodoinjava.com/java/date-time/java-localdatetime-class/
-        //ISSUE WITH PARSE, USER INPUT WON'T GET PARSED AND BECOME A LOCALDATETIME OBJECT
-            //possibly an issue with format, go to Assignment2.java line 26 for format and its declaration
         LocalDateTime date = LocalDateTime.parse(userDate, format);
         boolean beforeCurr = date.isBefore(currentDate);
         if (!beforeCurr){
@@ -113,16 +107,6 @@ public class CalenderEvent {
             return;
         }
     }
-    /**
-     * Setter for the end date
-     * @param date of the event 
-     * @param duration of the event
-     */
-    public void setEnd(LocalDateTime date, int duration){
-        LocalDateTime end = date.plusMinutes(duration);
-        this.end = end;
-    }
-
     //setDuration and setRecurring contain validation checks for the values entered
     /**
      * Setter for duration
@@ -186,7 +170,13 @@ public class CalenderEvent {
      * @return end date of the event
      */
     public LocalDateTime getEnd(){
-        return end;
+        if (date == null){
+            return null;
+        }
+        else{
+            LocalDateTime end = date.plusMinutes(duration);
+            return end;
+        }
     }
     /**
      * Method that returns the duration of the event
